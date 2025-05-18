@@ -1,0 +1,33 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Overview
+
+This is a Vue.js-based Telegram Mini App template project. The project uses TypeScript and follows modern Vue 3 composition API patterns.
+
+## Main Entry Points
+- [src/main.ts](mdc:src/main.ts) - Application entry point
+- [src/App.vue](mdc:src/App.vue) - Root Vue component
+- [src/init.ts](mdc:src/init.ts) - Application initialization logic
+
+## Key Directories
+- `src/components/` - Reusable Vue components
+- `src/pages/` - Page components for routing
+- `src/composables/` - Vue composition functions
+- `src/router/` - Vue Router configuration
+- `src/tonconnect/` - TON Connect integration
+- `src/helperts/` - Helper utilities
+- `src/assets/` - Static assets
+
+## Configuration Files
+- [vite.config.ts](mdc:vite.config.ts) - Vite build configuration
+- [tsconfig.json](mdc:tsconfig.json) - TypeScript configuration
+- [eslint.config.js](mdc:eslint.config.js) - ESLint configuration
+
+## Development
+- Use `pnpm dev` for local development
+- Use `pnpm dev:https` for HTTPS development
+- Use `pnpm build` for production build
+- Use `pnpm lint` for linting

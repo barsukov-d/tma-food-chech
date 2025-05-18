@@ -1,0 +1,46 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Routing and Navigation Guide
+
+## Router Configuration
+The router configuration is located in `src/router/`. The main router setup is defined in the router index file.
+
+## Page Components
+- Page components should be placed in `src/pages/`
+- Each page should be a Vue component
+- Use TypeScript for type safety
+- Follow the naming convention: `PageName.vue`
+
+## Route Structure
+```typescript
+{
+  path: '/route-path',
+  name: 'RouteName',
+  component: () => import('../pages/PageName.vue'),
+  meta: {
+    // Route metadata
+  }
+}
+```
+
+## Navigation
+- Use `useRouter()` for programmatic navigation
+- Use `useRoute()` to access current route information
+- Use `<router-link>` for declarative navigation
+- Handle route guards in the router configuration
+
+## Best Practices
+1. Use lazy loading for route components
+2. Implement proper route guards
+3. Use route meta for additional route information
+4. Handle navigation errors appropriately
+5. Use TypeScript for route type definitions
+
+## Route Guards
+- Implement authentication guards
+- Handle route access permissions
+- Manage navigation state
+- Handle route transitions

@@ -1,0 +1,44 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# TON Connect Integration Guide
+
+## Overview
+This project uses TON Connect for blockchain integration. The TON Connect configuration and utilities are located in `src/tonconnect/`.
+
+## Key Components
+- TON Connect UI integration
+- Wallet connection management
+- Transaction handling
+- Blockchain interaction utilities
+
+## Usage
+```typescript
+import { useTonConnect } from '@tonconnect/ui-vue'
+
+// In your component
+const { connected, wallet } = useTonConnect()
+```
+
+## Best Practices
+1. Handle wallet connection states
+2. Implement proper error handling
+3. Use TypeScript for type safety
+4. Follow TON Connect security guidelines
+5. Implement proper transaction validation
+
+## Security Considerations
+- Never expose private keys
+- Validate all transactions
+- Implement proper error handling
+- Use secure connection methods
+- Follow TON Connect security best practices
+
+## Common Patterns
+- Wallet connection management
+- Transaction signing
+- Balance checking
+- Contract interaction
+- Event handling

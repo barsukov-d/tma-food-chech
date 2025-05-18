@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Component Development Guide
+
+## Component Structure
+Components should be placed in the `src/components/` directory. Each component should:
+- Use TypeScript
+- Follow Vue 3 Composition API patterns
+- Include proper type definitions
+- Use proper naming conventions (PascalCase for component names)
+
+## Component Template
+```vue
+<script setup lang="ts">
+// Component logic here
+</script>
+
+<template>
+  <!-- Component template here -->
+</template>
+
+<style scoped>
+/* Component styles here */
+</style>
+```
+
+## Best Practices
+1. Use TypeScript for type safety
+2. Keep components focused and single-responsibility
+3. Use props validation with TypeScript
+4. Implement proper error handling
+5. Use composables for shared logic
+6. Follow Vue 3's Composition API patterns
+
+## Component Organization
+- Place reusable components in `src/components/`
+- Place page-specific components in their respective page directories
+- Use index files to export components
+- Group related components in subdirectories
+
+## State Management
+- Use composables for shared state
+- Keep component state local when possible
+- Use props for parent-child communication
+- Use emit for child-parent communication
