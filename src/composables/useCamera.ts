@@ -8,14 +8,8 @@ export function useCamera() {
 	const cameraReady = ref<boolean>(false);
 
 	// Используем композицию для работы с фото
-	const {
-		canvasRef,
-		photoRef,
-		hasPhoto,
-		captureFromVideo,
-		clearPhoto,
-		savePhotoAsFile,
-	} = usePhotoCapture();
+	const { canvasRef, photoRef, hasPhoto, clearPhoto, savePhotoAsFile } =
+		usePhotoCapture();
 
 	// Start the camera stream
 	const startCamera = async () => {
@@ -83,7 +77,47 @@ export function useCamera() {
 			return null;
 		}
 
-		return captureFromVideo(videoRef.value);
+		if (!canvasRef.value) {
+			console.error("Canvas is not available");
+			return null;
+		}
+
+		const canvas = canvasRef.value;
+		const video = videoRef.value;
+
+		console.log(
+			"Taking photo with dimensions:",
+			video.videoWidth,
+			"x",
+			video.videoHeight,
+		);
+
+		// Set canvas dimensions to match video
+		canvas.width = video.videoWidth || 320;
+		canvas.height = video.videoHeight || 240;
+
+		// Draw the current video frame to the canvas
+		const context = canvas.getContext("2d");
+		if (context) {
+			context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+			// Convert canvas to data URL
+			const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+
+			// Display the photo
+			if (photoRef.value) {
+				photoRef.value.src = imageDataUrl;
+				hasPhoto.value = true;
+				console.log(
+					"Photo captured and hasPhoto set to:",
+					hasPhoto.value,
+				);
+			}
+
+			return imageDataUrl;
+		}
+
+		return null;
 	};
 
 	// Stop all media streams

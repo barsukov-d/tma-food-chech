@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import AppPage from "@/components/AppPage.vue";
 import { useCamera } from "@/composables/useCamera";
+
+// Локальное состояние для отображения фото
+const localHasPhoto = ref(false);
+const capturedPhotoSrc = ref("");
 
 // Используем composable для камеры
 const {
@@ -9,13 +13,12 @@ const {
 	canvasRef,
 	photoRef,
 	errorMessage,
-	hasPhoto,
 	cameraReady,
-	takePhoto,
-	clearPhoto,
-	savePhotoAsFile,
 	initialize,
 	cleanup,
+	savePhotoAsFile,
+	clearPhoto,
+	startCamera,
 } = useCamera();
 
 // Инициализируем камеру при монтировании компонента
@@ -27,6 +30,67 @@ onMounted(() => {
 onUnmounted(() => {
 	cleanup();
 });
+
+// Собственная функция для захвата фото
+const takePhoto = () => {
+	if (!videoRef.value || !cameraReady.value || !canvasRef.value) {
+		console.error("Camera or canvas not ready");
+		return;
+	}
+
+	try {
+		const canvas = canvasRef.value;
+		const video = videoRef.value;
+
+		console.log(
+			"Taking photo with dimensions:",
+			video.videoWidth,
+			"x",
+			video.videoHeight,
+		);
+
+		// Установка размеров canvas
+		canvas.width = video.videoWidth || 320;
+		canvas.height = video.videoHeight || 240;
+
+		// Рисуем текущий кадр видео на canvas
+		const context = canvas.getContext("2d");
+		if (context) {
+			context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+			// Преобразуем canvas в URL
+			const imageDataUrl = canvas.toDataURL("image/jpeg", 0.8);
+
+			// Сохраняем URL и меняем состояние
+			capturedPhotoSrc.value = imageDataUrl;
+			localHasPhoto.value = true;
+
+			if (photoRef.value) {
+				photoRef.value.src = imageDataUrl;
+			}
+
+			console.log("Photo captured successfully, hasPhoto set to true");
+		}
+	} catch (error) {
+		console.error("Error taking photo:", error);
+	}
+};
+
+// Сброс фото и перезапуск камеры
+const resetPhoto = async () => {
+	localHasPhoto.value = false;
+	capturedPhotoSrc.value = "";
+	clearPhoto();
+
+	// Перезапускаем камеру чтобы избежать черного экрана
+	console.log("Restarting camera after reset");
+	await startCamera();
+};
+
+// Сохранение фото в файл
+const savePhoto = (fileName: string) => {
+	savePhotoAsFile(fileName);
+};
 </script>
 
 <template>
@@ -36,7 +100,7 @@ onUnmounted(() => {
 				{{ errorMessage }}
 			</div>
 
-			<div v-if="!hasPhoto" class="camera-view">
+			<div v-if="!localHasPhoto" class="camera-view">
 				<video
 					ref="videoRef"
 					autoplay
@@ -56,19 +120,20 @@ onUnmounted(() => {
 
 			<div v-else class="photo-view">
 				<img
+					:src="capturedPhotoSrc"
 					ref="photoRef"
 					class="captured-photo"
 					alt="Captured food"
 				/>
 				<div class="photo-actions">
 					<button
-						@click="clearPhoto"
+						@click="resetPhoto"
 						class="action-btn action-btn-danger"
 					>
 						Retake
 					</button>
 					<button
-						@click="savePhotoAsFile('my-food.jpg')"
+						@click="savePhoto('my-food.jpg')"
 						class="action-btn action-btn-success"
 					>
 						Save Photo
@@ -78,6 +143,51 @@ onUnmounted(() => {
 
 			<!-- Hidden canvas used for processing -->
 			<canvas ref="canvasRef" class="hidden-canvas"></canvas>
+
+			<!-- Для отладки -->
+			<div
+				class="debug-info"
+				style="
+					margin-top: 15px;
+					padding: 10px;
+					background: #f5f5f5;
+					border-radius: 8px;
+				"
+			>
+				<div>
+					Status: {{ localHasPhoto ? "Photo captured" : "No photo" }}
+				</div>
+				<div v-if="capturedPhotoSrc">
+					Photo URL length: {{ capturedPhotoSrc.length }}
+				</div>
+				<button
+					@click="localHasPhoto = true"
+					style="
+						margin-top: 5px;
+						padding: 5px 10px;
+						background: #007aff;
+						color: white;
+						border: none;
+						border-radius: 4px;
+					"
+				>
+					Force hasPhoto=true
+				</button>
+				<button
+					@click="localHasPhoto = false"
+					style="
+						margin-top: 5px;
+						padding: 5px 10px;
+						background: #ff3b30;
+						color: white;
+						border: none;
+						border-radius: 4px;
+						margin-left: 5px;
+					"
+				>
+					Force hasPhoto=false
+				</button>
+			</div>
 		</div>
 	</AppPage>
 </template>
